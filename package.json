@@ -28,6 +28,7 @@
     "test": "npx braintrust eval src/tools-evaluations"
   },
   "dependencies": {
+    "express": "^5.1.0",
     "@modelcontextprotocol/sdk": "1.6.0",
     "@neondatabase/api-client": "2.0.0",
     "@neondatabase/serverless": "0.10.4",
@@ -36,6 +37,7 @@
     "zod": "3.24.1"
   },
   "devDependencies": {
+    "@types/express": "^5.0.1",
     "@eslint/js": "9.21.0",
     "@types/node": "20.17.9",
     "@types/node-fetch": "2.6.12",
