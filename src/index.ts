@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { NEON_HANDLERS, NEON_TOOLS, ToolHandler } from './tools.js';
 import { NEON_RESOURCES } from './resources.js';
 import { handleInit, parseArgs } from './initConfig.js';
@@ -87,12 +86,26 @@ NEON_RESOURCES.forEach((resource) => {
  * Start the server using stdio transport.
  * This allows the server to communicate via standard input/output streams.
  */
-async function main() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-}
+import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
+import express from "express";
+const app = express();
 
-main().catch((error: unknown) => {
-  console.error('Server error:', error);
-  process.exit(1);
+let transport: SSEServerTransport;
+
+app.get("/sse", (req, res) => {
+    console.log("Received connection");
+    transport = new SSEServerTransport("/messages", res);
+    server.connect(transport);
+});
+
+app.post("/messages", (req, res) => {
+    console.log("Received message handle message");
+    if (transport) {
+        transport.handlePostMessage(req, res);
+    }
+});
+
+const PORT = process.env.PORT || 3001;
+    app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
